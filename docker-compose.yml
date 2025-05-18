@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: tinubu
+      MYSQL_USER: tinubu
+      MYSQL_PASSWORD: tinubu
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  app:
+    build: .
+    image: my-springboot-app:latest
+    container_name: tinubu-app
+    restart: on-failure
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/tinubu
+      SPRING_DATASOURCE_USERNAME: tinubu
+      SPRING_DATASOURCE_PASSWORD: tinubu
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      - mysql
+
+volumes:
+  mysql-data:
